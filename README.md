@@ -1,68 +1,89 @@
-p6-file-directory-tree
-======================
+[![Actions Status](https://github.com/raku-community-modules/File-Directory-Tree/actions/workflows/linux.yml/badge.svg)](https://github.com/raku-community-modules/File-Directory-Tree/actions) [![Actions Status](https://github.com/raku-community-modules/File-Directory-Tree/actions/workflows/macos.yml/badge.svg)](https://github.com/raku-community-modules/File-Directory-Tree/actions) [![Actions Status](https://github.com/raku-community-modules/File-Directory-Tree/actions/workflows/windows.yml/badge.svg)](https://github.com/raku-community-modules/File-Directory-Tree/actions)
 
-|last push to main|[![Linux Status](https://github.com/labster/p6-file-directory-tree/actions/workflows/Linux.yml/badge.svg?event=push)](https://github.com/labster/p6-file-directory-tree/actions)|[![MacOS Status](https://github.com/labster/p6-file-directory-tree/actions/workflows/MacOS.yml/badge.svg?event=push)](https://github.com/labster/p6-file-directory-tree/actions)|[![Windows Status](https://github.com/labster/p6-file-directory-tree/actions/workflows/Windows.yml/badge.svg?event=push)](https://github.com/labster/p6-file-directory-tree/actions) |
-|---|---|---|---| 
-|scheduled health check|[![Linux Status](https://github.com/labster/p6-file-directory-tree/actions/workflows/Linux.yml/badge.svg?event=schedule)](https://github.com/labster/p6-file-directory-tree/actions)|[![MacOS Status](https://github.com/labster/p6-file-directory-tree/actions/workflows/MacOS.yml/badge.svg?event=schedule)](https://github.com/labster/p6-file-directory-tree/actions)|[![Windows Status](https://github.com/labster/p6-file-directory-tree/actions/workflows/Windows.yml/badge.svg?event=schedule)](https://github.com/labster/p6-file-directory-tree/actions)| 
+NAME
+====
 
-Raku module to create and delete directory trees.
+File::Directory::Tree - Create, delete and empty directories
 
+SYNOPSIS
+========
 
-## SYNOPSIS
+```raku
+use File::Directory::Tree;
 
-	use File::Directory::Tree;
+# make a new directory tree
+mktree "foo/bar/baz/quux";
 
-	# make a new directory tree
-	mktree "foo/bar/baz/quux";
-	# delete what you just made
-	rmtree "foo";
-	# clean up your /tmp -- but don't delete /tmp itself
-	empty-directory "/tmp";
+# delete what you just made
+rmtree "foo";
 
-	
-## DESCRIPTION
+# clean up your /tmp -- but don't delete /tmp itself
+empty-directory "/tmp";
+```
 
-This module provides recursive versions of mkdir and rmdir.  This might be useful for things like setting up a repo all at once.
+DESCRIPTION
+===========
 
-## FUNCTIONS
+The `File::Directory::Tree` distributin provides recursive versions of `mkdir` and `rmdir`, as well as an `empty-directory` subroutine for emptying out directories.
 
-#### mktree
-Makes a directory tree with the given path.  If any elements of the tree do not already exist, this will make new directories.
+SUBROUTINES
+===========
 
-	sub mktree ($path, $mask = 0o777)
+mktree
+------
 
-Accepts an optional second argument, the permissions mask.  This is supplied to mkdir, and used for all of the directories it makes; the default is `777` (`a+rwx`).  It takes an integer, but you really should supply something in octal like 0o755 or :8('500').
+```raku
+# make a new directory tree
+mktree "foo/bar/baz/quux";
+```
 
-Returns True if successful.
+Makes a directory tree with the given path (which can either be a string or an `IO::Path` object). If any elements of the tree do not already exist, this will make new directories.
 
-#### rmtree
-This deletes all files under a directory tree with the given path before deleting the directory itself.  It will recursively call unlink and rmdir until everything under the path is deleted.
+Accepts an optional second argument, the permissions mask. This is supplied to `mkdir`, and used for all of the directories it makes; the default is `0o777` (`a+rwx`). It takes an integer, but you really should supply something in octal like `0o755` or `:8('500')`.
 
-Returns True if successful, and False if it cannot delete a file.
+Returns `True` if successful.
 
-#### empty-directory
-Also deletes all items in a given directory, but leaves the directory itself intact.  After running this, the only thing in the path should be '.' and '..'.
+rmtree
+------
 
-Returns True if successful, and False if it cannot delete a file.
+```raku
+# delete everything below the directory "foo" and "foo" itself
+rmtree "foo";
+```
 
-## TODO
+This deletes all files under a directory tree with the given path (which can either be a string or an `IO::Path` object) before deleting the directory itself. It will recursively call `unlink` and `rmdir` until everything under the path is deleted.
 
-* Probably handle errors in the test file better
+Returns True if successful, and False if it cannot delete a file or remove a directory.
 
-## SEE ALSO
+empty-directory
+---------------
 
-* [IO::Path](https://docs.raku.org/type/IO::Path)
-* [File::Spec](https://github.com/FROGGS/p6-File-Spec) (now part of [IO::Spec](https://docs.raku.org/type/IO::Spec))
+```raku
+# clean up your /tmp -- but don't delete /tmp itself
+empty-directory "/tmp";
+```
 
-## AUTHOR
+Deletes all items in a given directory (which can be specified either by a string or by an `IO::Path` object), but leaves the directory itself intact. After running this, the only thing in the directory should be '.' and '..'.
 
-Brent "Labster" Laabs, 2013.
+Returns True if successful, and False if it cannot delete a file or a directory.
 
-Contact the author at bslaabs@gmail.com or as labster on #perl6.  File [bug reports](https://github.com/labster/p6-IO-Path-More/issues) on github.
+AUTHORS
+=======
 
-Based loosely on code by written Daniel Muey in Perl 5's [File::Path::Tiny](http://search.cpan.org/~dmuey/File-Path-Tiny-0.5/lib/File/Path/Tiny.pod).
+  * Brent Laabs
 
-## COPYRIGHT
+  * Paul Cochrane
 
-This code is free software, licensed under the same terms as Perl 6; see the LICENSE file for details.
+  * Zoffix Znet
+
+Source can be located at: https://github.com/raku-community-modules/File-Directory-Tree . Comments and Pull Requests are welcome.
+
+COPYRIGHT AND LICENSE
+=====================
+
+Copyright 2013 - 2024 Brent Laabs
+
+Copyright 2025 Raku Community
+
+This library is free software; you can redistribute it and/or modify it under the Artistic License 2.0.
 

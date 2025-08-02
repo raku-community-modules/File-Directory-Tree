@@ -1,7 +1,5 @@
-use v6;
-use Test;
-use lib 'lib';
 use File::Directory::Tree;
+use Test;
 
 plan 9;
 
@@ -36,6 +34,4 @@ else {
     }
 }
 
-done-testing;
-
-# vim: expandtab shiftwidth=4 ft=perl6
+# vim: expandtab shiftwidth=4

@@ -1,41 +1,57 @@
-unit module File::Directory::Tree;
-
-multi sub mktree (Cool:D $path is copy, Int :$mask = 0o777 ) is export {
-	return True if $path.IO ~~ :d;
-	$path.=IO;
-	my @makedirs;
-	while $path !~~ :e {
-		@makedirs.push($path);
-		$path.=parent;
-	}
-	for @makedirs.reverse -> $dir {
-		mkdir($dir, $mask) or return False unless $dir.e;
-	}
-	True;
+#- mktree ----------------------------------------------------------------------
+my sub mktree(IO(Cool) $io is copy, Int :$mask = 0o777 ) is export {
+    unless $io.d {
+        my @makedirs;
+        until $io.e {  # UNCOVERABLE
+            @makedirs.unshift($io);
+            $io .= parent;
+        }
+        for @makedirs -> $dir {
+            mkdir($dir, $mask);
+            return False unless $dir.e;
+        }
+    }
+    True
 }
 
-multi sub empty-directory (Cool:D $path is copy) {
-    empty-directory $path.IO;
+#- empty-directory -------------------------------------------------------------
+my sub empty-directory(IO(Cool) $io) is export {
+    if $io.d {
+        for eager $io.dir -> $path {
+            if !$path.l and $path.d {
+                rmtree $path;
+            }
+            else {
+                unlink $path;
+            }
+        }
+        True
+    }
+    else {
+        "$io is not a directory".Failure
+    }
 }
 
-multi sub empty-directory (IO::Path:D $path) is export {
-	$path.d or fail "$path is not a directory";
-	for eager $path.dir -> $file {
-		#say $file.perl;
-		if $file.l.not and $file.d { rmtree $file }
-		else { unlink $file }
-	}
-	True;
+
+#- rmtree ----------------------------------------------------------------------
+my sub rmtree(IO(Cool) $io) is export {
+    if $io.e {
+        if $io.d {
+            return False unless empty-directory($io);
+            return False unless rmdir($io);
+            True
+        }
+        else {
+            "$io is not a directory".Failure
+        }
+    }
+    else {
+        True
+    }
 }
 
-multi sub rmtree (Cool:D $path is copy) {
-    rmtree $path.IO;
-}
+#- hack ------------------------------------------------------------------------
+# To allow version fetching in test files
+unit module File::Directory::Tree:ver<0.2>:auth<raku-community-modules>;
 
-multi sub rmtree (IO::Path:D $path) is export {
-	return True if !$path.e;
-	$path.d or fail "$path is not a directory";
-	empty-directory($path.IO) or return False;
-	rmdir($path.IO) or return False;
-	True;
-}
+# vim: expandtab shiftwidth=4

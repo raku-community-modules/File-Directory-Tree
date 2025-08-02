@@ -1,0 +1,97 @@
+=begin pod
+
+=head1 NAME
+
+File::Directory::Tree - Create, delete and empty directories
+
+=head1 SYNOPSIS
+
+=begin code :lang<raku>
+use File::Directory::Tree;
+
+# make a new directory tree
+mktree "foo/bar/baz/quux";
+
+# delete what you just made
+rmtree "foo";
+
+# clean up your /tmp -- but don't delete /tmp itself
+empty-directory "/tmp";
+=end code
+
+=head1 DESCRIPTION
+
+The C<File::Directory::Tree> distributin provides recursive versions of
+C<mkdir> and C<rmdir>, as well as an C<empty-directory> subroutine for
+emptying out directories.
+
+=head1 SUBROUTINES
+
+=head2 mktree
+
+=begin code :lang<raku>
+# make a new directory tree
+mktree "foo/bar/baz/quux";
+=end code
+
+Makes a directory tree with the given path (which can either be a string
+or an C<IO::Path> object).  If any elements of the tree do not already
+exist, this will make new directories.
+
+Accepts an optional second argument, the permissions mask.  This is
+supplied to C<mkdir>, and used for all of the directories it makes;
+the default is C<0o777> (C<a+rwx>).  It takes an integer, but you
+really should supply something in octal like C<0o755> or C<:8('500')>.
+
+Returns C<True> if successful.
+
+=head2 rmtree
+
+=begin code :lang<raku>
+# delete everything below the directory "foo" and "foo" itself
+rmtree "foo";
+=end code
+
+This deletes all files under a directory tree with the given path
+(which can either be a string or an C<IO::Path> object) before deleting
+the directory itself.  It will recursively call C<unlink> and C<rmdir>
+until everything under the path is deleted.
+
+Returns True if successful, and False if it cannot delete a file or
+remove a directory.
+
+=head2 empty-directory
+
+=begin code :lang<raku>
+# clean up your /tmp -- but don't delete /tmp itself
+empty-directory "/tmp";
+=end code
+
+Deletes all items in a given directory (which can be specified
+either by a string or by an C<IO::Path> object), but leaves the
+directory itself intact.  After running this, the only thing in the
+directory should be '.' and '..'.
+
+Returns True if successful, and False if it cannot delete a file or
+a directory.
+
+=head1 AUTHORS
+
+=item Brent Laabs
+=item Paul Cochrane
+=item Zoffix Znet
+
+Source can be located at: https://github.com/raku-community-modules/File-Directory-Tree
+.  Comments and Pull Requests are welcome.
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2013 - 2024 Brent Laabs
+
+Copyright 2025 Raku Community
+
+This library is free software; you can redistribute it and/or modify it under the Artistic License 2.0.
+
+=end pod
+
+# vim: expandtab shiftwidth=4
