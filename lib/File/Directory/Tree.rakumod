@@ -52,6 +52,6 @@ my sub rmtree(IO(Cool) $io) is export {
 
 #- hack ------------------------------------------------------------------------
 # To allow version fetching in test files
-unit module File::Directory::Tree:ver<0.2>:auth<raku-community-modules>;
+unit module File::Directory::Tree:ver<0.2>:auth<zef:raku-community-modules>;
 
 # vim: expandtab shiftwidth=4
